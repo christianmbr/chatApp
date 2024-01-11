@@ -8,9 +8,15 @@ const httpServer = http.createServer(app)
 const io = new Server(httpServer)
 
 io.on('connection', socket => { 
-    console.log('Client connected!')
+    console.log('Client connected!', socket.id)
+    socket.emit('id', socket.id)
     socket.on('message', data => {
         console.log(data)
+        // socket.broadcast.emit
+        socket.broadcast.emit('message', {
+            data,
+            id: socket.id
+        })
     })
 })
 
