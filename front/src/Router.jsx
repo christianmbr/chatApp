@@ -8,9 +8,9 @@ export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/sigup" element={<Login />} />
         <Route path="/" element={<Home />} />
-        <Route path="/sigup" element={<SigUp />} />
+        <Route path="/login" element={<SigUp />} />
         <Route path="/app" element={<App />} />
       </Routes>
     </BrowserRouter>

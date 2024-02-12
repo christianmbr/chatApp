@@ -4,6 +4,7 @@ import http from "http";
 import { Server } from "socket.io";
 import account from "./src/routes/accountRouter.js";
 import mongoConnection from "./src/model/mongoConnection.js";
+import cors from "cors";
 
 const date = new Date();
 
@@ -17,6 +18,7 @@ mongoConnection.connect();
 
 // Routes.
 app.use(express.json());
+app.use(cors());
 app.use("/api/account", account);
 
 io.on("connection", (socket) => {

@@ -1,16 +1,68 @@
 import accountDb from "../model/accountDb.js";
+import config from "../../../config.js";
+import jwt from "jsonwebtoken";
+
+function validate(name, password = null) {
+  return name.includes(" ") ? false : true;
+}
 
 async function register(req, res) {
   const { name, password } = req.body;
+  // Validate inputs.
+  if (!validate(name)) {
+    return res.sendStatus(400);
+  }
   try {
+    // Cresting the new user.
     const response = await accountDb.register(name, password);
 
-    return res.status(200).json({
-      response,
-    });
+    if (typeof response === "object") {
+      const newUserToken = jwt.sign(
+        { id: response._id },
+        config["secretPassJsonWebToken"],
+        {
+          expiresIn: "1m",
+        }
+      );
+
+      return res.status(200).json({
+        response: {
+          token: newUserToken,
+        },
+      });
+    } else {
+      res.sendStatus(409);
+    }
   } catch (error) {
     console.error(error.code);
   }
 }
 
-export default { register };
+async function login(req, res) {
+  const { name, password } = req.body;
+
+  try {
+    const userFound = await accountDb.login(name, password);
+    if (userFound) {
+      // Sign token for user found.
+      const newUserToken = jwt.sign(
+        { id: userFound._id },
+        config["secretPassJsonWebToken"],
+        {
+          expiresIn: "1m",
+        }
+      );
+      // Send token.
+      res.status(200).json({
+        response: {
+          token: newUserToken,
+        },
+      });
+    }
+    res.sendStatus(401);
+  } catch (err) {
+    console.error(err.message);
+  }
+}
+
+export default { register, login };

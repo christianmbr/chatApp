@@ -3,4 +3,7 @@ import accountRouter from "../controller/accountController.js";
 
 const account = express.Router();
 
-export default account.post("/register", accountRouter.register);
+account.post("/register", accountRouter.register);
+account.post("/login", accountRouter.login);
+
+export default account;
