@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
+import { useNavigate } from "react-router-dom";
+import { validateToken } from "../../middleware/auth";
 
 const socket = io("/");
 const date = new Date();
@@ -8,7 +10,16 @@ export default function App() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [id, setId] = useState("");
+  const navigate = useNavigate();
   let lastUser = "";
+
+  useEffect(() => {
+    validateToken().then((isLoged) => {
+      if (!isLoged) {
+        navigate("/login");
+      }
+    });
+  }, []);
 
   function handleSubmit(event) {
     event.preventDefault();

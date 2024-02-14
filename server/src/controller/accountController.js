@@ -2,14 +2,14 @@ import accountDb from "../model/accountDb.js";
 import config from "../../../config.js";
 import jwt from "jsonwebtoken";
 
-function validate(name, password = null) {
+function validateInputs(name, password = null) {
   return name.includes(" ") ? false : true;
 }
 
 async function register(req, res) {
   const { name, password } = req.body;
   // Validate inputs.
-  if (!validate(name)) {
+  if (!validateInputs(name)) {
     return res.sendStatus(400);
   }
   try {
@@ -65,4 +65,18 @@ async function login(req, res) {
   }
 }
 
-export default { register, login };
+async function validateToken(req, res) {
+  try {
+    const token = req.params.token;
+    const response = jwt.verify(token, config["secretPassJsonWebToken"]);
+    console.log(response);
+
+    return res.sendStatus(200);
+  } catch (error) {
+    return res.status(401).json({
+      response: error.message,
+    });
+  }
+}
+
+export default { register, login, validateToken };

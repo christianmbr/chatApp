@@ -1,11 +1,20 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { validateToken } from "../middleware/auth.js";
 
 export default function Login() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    validateToken().then((isLoged) => {
+      if (isLoged) {
+        navigate("/app");
+      }
+    });
+  }, []);
 
   async function handleOnSubmit(event) {
     event.preventDefault();
