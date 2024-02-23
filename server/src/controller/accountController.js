@@ -25,13 +25,21 @@ async function register(req, res) {
         }
       );
 
+      res.cookie("token", newUserToken, {
+        maxAge: 60000,
+      });
+
       return res.status(200).json({
         response: {
-          token: newUserToken,
+          message: "The user has been created",
         },
       });
     } else {
-      res.sendStatus(409);
+      res.status(409).json({
+        response: {
+          message: response,
+        },
+      });
     }
   } catch (error) {
     console.error(error.code);
@@ -52,14 +60,23 @@ async function login(req, res) {
           expiresIn: "1m",
         }
       );
-      // Send token.
+      // Configurate token.
+      res.cookie("token", newUserToken, {
+        maxAge: 60000,
+      });
+
       res.status(200).json({
         response: {
-          token: newUserToken,
+          message: "Successful login",
+        },
+      });
+    } else {
+      res.status(401).json({
+        response: {
+          message: "Unable to register",
         },
       });
     }
-    res.sendStatus(401);
   } catch (err) {
     console.error(err.message);
   }
@@ -79,4 +96,31 @@ async function validateToken(req, res) {
   }
 }
 
-export default { register, login, validateToken };
+async function findUser(req, res) {
+  const token = req.headers.access;
+
+  if (token) {
+    try {
+      const userInfo = jwt.verify(token, config["secretPassJsonWebToken"]);
+      const response = await accountDb.findUser(userInfo.id);
+      if (typeof response == "object") {
+        return res.status(200).json({
+          response: {
+            message: "welcome",
+            name: response.name,
+          },
+        });
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  return res.status(401).json({
+    response: {
+      message: "unauthorized",
+    },
+  });
+}
+
+export default { register, login, validateToken, findUser };

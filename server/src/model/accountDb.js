@@ -10,8 +10,7 @@ async function register(name, password) {
     }).save();
     return newUser;
   } catch (error) {
-    // console.error(error.message);
-    return error.code;
+    return error.message;
   }
 }
 
@@ -29,4 +28,12 @@ async function login(name, password) {
   }
 }
 
-export default { register, login };
+async function findUser(id) {
+  try {
+    return await User.findById(id);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+export default { register, login, findUser };

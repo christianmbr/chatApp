@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import io from "socket.io-client";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { validateToken } from "../../middleware/auth";
+import io from "socket.io-client";
 
 const socket = io("/");
 const date = new Date();
@@ -11,15 +11,8 @@ export default function App() {
   const [messages, setMessages] = useState([]);
   const [id, setId] = useState("");
   const navigate = useNavigate();
+  const { verifyToken, isAuth, user } = useAuth();
   let lastUser = "";
-
-  useEffect(() => {
-    validateToken().then((isLoged) => {
-      if (!isLoged) {
-        navigate("/login");
-      }
-    });
-  }, []);
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -59,12 +52,19 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    verifyToken();
+    if (isAuth) {
+      navigate("/app");
+    } else {
+      navigate("/login");
+    }
+  }, [isAuth]);
+
   return (
     <div className="flex-col">
       <div className="flex px-10 py-4">
-        <h2 className="flex-1 text-center text-2xl">
-          USER {id.substring(0, 2).toUpperCase()}
-        </h2>
+        <h2 className="flex-1 text-center text-2xl">USER {user}</h2>
       </div>
       <form
         className="flex justify-center p-4 shadow-md gap-8"
@@ -112,7 +112,7 @@ export default function App() {
             <div key={i} className="flex flex-col items-start">
               {showUser ? (
                 <span className="text-sm text-gray-500 font-bold pt-6">
-                  {message.id.substring(0, 2).toUpperCase()}
+                  {user}
                 </span>
               ) : null}
               <div className="mt-1 flex items-end justify-start">

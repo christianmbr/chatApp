@@ -13,9 +13,4 @@
 use("chatapp");
 
 // Insert a few documents into the sales collection.
-db.getCollection("user").insertMany([
-  {
-    user: "Christian",
-    password: "arepadePollo",
-  },
-]);
+db.users.deleteMany({});
