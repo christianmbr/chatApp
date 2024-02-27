@@ -17,14 +17,16 @@ Cuenta con funcionalidades como:
 - Envío de mensajes en tiempo real sin refrescar
 - Interfaz responsiva
 - Hora de mensaje
-- Identificación de usuario aleatoria
+- Inicio de seion.
+- Crear cuenta de ususario.
 
 ## Instalación
 
 1. Clona este repositorio
 2. Ejecuta `npm install` tanto en la carpeta del front como en el back para instalar dependencias.
-3. Ejecuta `npm run dev` tanto en el back como en el front para inicializarlo en entorno de desarrollo.
-4. Abre `http://localhost:5173` puerto predeterminado de vite para comenzar a chatear.
+3. Configura la ruta de tu base de datos mongo en un archivo .env. El nombre de la variables estan en archivo config.js
+4. Ejecuta `npm run dev` tanto en el back como en el front para inicializarlo en entorno de desarrollo.
+
 
 ## Tecnologías
 
